@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:local_auth/local_auth.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -30,6 +29,11 @@ class _SettingsPageState extends State<SettingsPage> {
     await prefs.setBool('switchState', value);
   }
 
+  Future<void> _logout() async {
+    final prefManager = await SharedPreferences.getInstance();
+    await prefManager.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,14 +41,24 @@ class _SettingsPageState extends State<SettingsPage> {
         title: Text('Settings'),
       ),
       body: Center(
-        child: Switch(
-          value: _isSwitched,
-          onChanged: (value) async {
-            setState(() {
-              _isSwitched = value;
-            });
-            await _saveSwitchState(value);
-          },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Switch(
+              value: _isSwitched,
+              onChanged: (value) async {
+                setState(() {
+                  _isSwitched = value;
+                });
+                await _saveSwitchState(value);
+              },
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _logout,
+              child: Text('Logout'),
+            ),
+          ],
         ),
       ),
     );
